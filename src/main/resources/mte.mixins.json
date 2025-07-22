@@ -1,0 +1,43 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "io.github.tau34.mte.mixin",
+  "refmap": "mte.refmap.json",
+  "compatibilityLevel": "JAVA_17",
+  "mixins": [
+    "nbt.BlockMekanismMixin",
+    "data.BlockStateMixin",
+    "data.CapabilityTileEntityMixin",
+    "calc.machine.ChemicalInfuserMixin",
+    "calc.machine.ChemicalWasherMixin",
+    "calc.machine.CondensentratorMixin",
+    "nbt.CopyNbtFunctionAccessor",
+    "nbt.CopyNbtFunctionMixin",
+    "nbt.CopyOperationMixin",
+    "calc.machine.ElectricPumpMixin",
+    "calc.machine.ElectrolyticSeparatorMixin",
+    "calc.machine.IsotopicCentrifugeMixin",
+    "tile.ItemGasToItemFactoryMixin",
+    "tile.ItemToItemFactoryMixin",
+    "gui.MekanismContainerMixin",
+    "gui.MekanismTileContainerMixin",
+    "calc.MekanismUtilsMixin",
+    "calc.machine.MetallurgicInfuserFactoryMixin",
+    "PacketHandlerMixin",
+    "calc.machine.PigmentMixerMixin",
+    "calc.machine.QIOFilterHandlerMixin",
+    "calc.machine.SawingFactoryMixin",
+    "tile.TileEntityFactoryMixin",
+    "tile.TileEntityMekanismMixin"
+  ],
+  "client": [
+    "gui.GuiFactoryMixin",
+    "gui.GuiMekanismMixin",
+    "gui.GuiMekanismTileMixin"
+  ],
+  "server": [
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}
