@@ -1,9 +1,12 @@
 package io.github.tau34.mte.common.util;
 
 import io.github.tau34.mte.Enhancement;
+import io.github.tau34.mte.common.holder.IAdditionalEnhanceable;
 import io.github.tau34.mte.common.holder.ICapabilityTileEntityHolder;
 import io.github.tau34.mte.common.holder.ITileEntityMekanismHolder;
+import mekanism.api.Upgrade;
 import mekanism.common.tier.FactoryTier;
+import mekanism.common.tile.base.TileEntityMekanism;
 import mekanism.common.tile.interfaces.IUpgradeTile;
 
 public class MTEUtils {
@@ -24,5 +27,13 @@ public class MTEUtils {
             slots += holder.getProcessingData();
         }
         return slots;
+    }
+
+    public static boolean supportsEnhancement(IUpgradeTile tile) {
+        return tile.supportsUpgrades() || tile instanceof IAdditionalEnhanceable;
+    }
+
+    public static boolean supportsUpgrade(TileEntityMekanism instance, Upgrade upgrade) {
+        return instance.supportsUpgrade(upgrade) || (instance instanceof ITileEntityMekanismHolder holder && holder.getEnhancementComponent().supports(upgrade));
     }
 }

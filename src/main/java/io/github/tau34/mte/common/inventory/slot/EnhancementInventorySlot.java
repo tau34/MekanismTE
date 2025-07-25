@@ -44,9 +44,7 @@ public class EnhancementInventorySlot extends BasicInventorySlot {
         return new VirtualInventoryContainerSlot(this, new SelectedWindowData(SelectedWindowData.WindowType.UPGRADE), getSlotOverlay(), this::setStackUnchecked);
     }
 
-    @Override
-    public void onContentsChanged() {
-        super.onContentsChanged();
+    public void onChange() {
         onChange.run();
     }
 

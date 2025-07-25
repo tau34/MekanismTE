@@ -1,6 +1,8 @@
 package io.github.tau34.mte.common.tile.component;
 
+import com.mojang.logging.LogUtils;
 import io.github.tau34.mte.Enhancement;
+import io.github.tau34.mte.common.holder.IAdditionalEnhanceable;
 import io.github.tau34.mte.common.holder.IBlockStateHolder;
 import io.github.tau34.mte.common.inventory.slot.EnhancementInventorySlot;
 import io.github.tau34.mte.common.item.ItemEnhancement;
@@ -53,17 +55,12 @@ public class TileComponentEnhancement implements ITileComponent, MekanismContain
         if (this.tile instanceof TileEntityFactory<?>) {
             enhancements.add(Enhancement.PROCESSING);
         }
-        supported = Set.copyOf(enhancements);
+        if (tile instanceof IAdditionalEnhanceable additional) {
+            enhancements.addAll(additional.supported());
+        }
+        supported = new HashSet<>(enhancements);
         for (int i = 0; i < 3; i++) {
-            enhancementSlot.add(EnhancementInventorySlot.input(tile, supported, () -> {
-                for (Enhancement enhancement : getSupportedTypes()) {
-                    switch (enhancement) {
-                        case ECO, ENERGY -> tile.recalculateUpgrades(Upgrade.ENERGY);
-                        case SPEED -> tile.recalculateUpgrades(Upgrade.SPEED);
-                        case PROCESSING -> this.replaceBlock();
-                    }
-                }
-            }));
+            enhancementSlot.add(EnhancementInventorySlot.input(tile, supported, this::recalculateEnhancement));
         }
         this.tile.addComponent(this);
     }
@@ -73,6 +70,18 @@ public class TileComponentEnhancement implements ITileComponent, MekanismContain
         return supported;
     }
 
+    public boolean supports(Enhancement enhancement) {
+        return supported.contains(enhancement);
+    }
+
+    public boolean supports(Upgrade upgrade) {
+        return switch (upgrade) {
+            case SPEED -> supports(Enhancement.SPEED);
+            case ENERGY -> supports(Enhancement.ENERGY) || supports(Enhancement.ECO);
+            default -> false;
+        };
+    }
+
     public List<EnhancementInventorySlot> getSlots() {
         return enhancementSlot;
     }
@@ -80,7 +89,10 @@ public class TileComponentEnhancement implements ITileComponent, MekanismContain
     @Override
     public void read(CompoundTag nbtTags) {
         NBTUtils.setCompoundIfPresent(nbtTags, "componentEnhancement", enhancementNBT ->
-                NBTUtils.setListIfPresent(enhancementNBT, NBTConstants.ITEMS, Tag.TAG_COMPOUND, list -> DataHandlerUtils.readContainers(getSlots(), list)));
+                NBTUtils.setListIfPresent(enhancementNBT, NBTConstants.ITEMS, Tag.TAG_COMPOUND, list -> {
+                    DataHandlerUtils.readContainers(getSlots(), list);
+                    recalculateEnhancement();
+                }));
     }
 
     @Override
@@ -93,7 +105,10 @@ public class TileComponentEnhancement implements ITileComponent, MekanismContain
     @Override
     public void readFromUpdateTag(CompoundTag updateTag) {
         NBTUtils.setCompoundIfPresent(updateTag, "enhancementClient", enhancementNBT ->
-                NBTUtils.setListIfPresent(enhancementNBT, NBTConstants.ITEMS, Tag.TAG_COMPOUND, list -> DataHandlerUtils.readContainers(getSlots(), list)));
+                NBTUtils.setListIfPresent(enhancementNBT, NBTConstants.ITEMS, Tag.TAG_COMPOUND, list -> {
+                    DataHandlerUtils.readContainers(getSlots(), list);
+                    recalculateEnhancement();
+                }));
     }
 
     @Override
@@ -122,6 +137,16 @@ public class TileComponentEnhancement implements ITileComponent, MekanismContain
             list.add(SyncableItemStack.create(slot::getStack, slot::setStack));
         }
         return list;
+    }
+
+    public void recalculateEnhancement() {
+        for (Enhancement enhancement : getSupportedTypes()) {
+            switch (enhancement) {
+                case ECO, ENERGY -> tile.recalculateUpgrades(Upgrade.ENERGY);
+                case SPEED -> tile.recalculateUpgrades(Upgrade.SPEED);
+                case PROCESSING -> this.replaceBlock();
+            }
+        }
     }
 
     public void replaceBlock() {

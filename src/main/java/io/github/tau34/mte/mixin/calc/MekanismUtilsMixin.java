@@ -41,7 +41,7 @@ public abstract class MekanismUtilsMixin {
 
     @Inject(method = "getBaseUsage", at = @At("HEAD"), cancellable = true)
     private static void modifyBaseUsage(IUpgradeTile tile, int def, CallbackInfoReturnable<Long> cir) {
-        if (tile.supportsUpgrades()) {
+        if (MTEUtils.supportsEnhancement(tile)) {
             if (tile.supportsUpgrade(Upgrade.GAS)) {
                 cir.setReturnValue(Math.round(def * Math.pow(MekanismConfig.general.maxUpgradeMultiplier.get(),
                         fractionUpgrades(tile, Upgrade.SPEED) + MTEUtils.fractionEnhancement(tile, Enhancement.SPEED)
@@ -54,7 +54,7 @@ public abstract class MekanismUtilsMixin {
 
     @Inject(method = "getTicks", at = @At("HEAD"), cancellable = true)
     private static void modifyTicks(IUpgradeTile tile, int def, CallbackInfoReturnable<Integer> cir) {
-        if (tile.supportsUpgrades()) {
+        if (MTEUtils.supportsEnhancement(tile)) {
             cir.setReturnValue(MathUtils.clampToInt(def * Math.pow(MekanismConfig.general.maxUpgradeMultiplier.get(),
                     -fractionUpgrades(tile, Upgrade.SPEED) - MTEUtils.fractionEnhancement(tile, Enhancement.SPEED))));
             return;
@@ -64,7 +64,7 @@ public abstract class MekanismUtilsMixin {
 
     @Inject(method = "getEnergyPerTick", at = @At("HEAD"), cancellable = true)
     private static void modifyEnergyPerTick(IUpgradeTile tile, FloatingLong def, CallbackInfoReturnable<FloatingLong> cir) {
-        if (tile.supportsUpgrades()) {
+        if (MTEUtils.supportsEnhancement(tile)) {
             cir.setReturnValue(def.multiply(Math.pow(MekanismConfig.general.maxUpgradeMultiplier.get(),
                     2 * (fractionUpgrades(tile, Upgrade.SPEED) + MTEUtils.fractionEnhancement(tile, Enhancement.SPEED))
                             - (fractionUpgrades(tile, Upgrade.ENERGY) + MTEUtils.fractionEnhancement(tile, Enhancement.ECO)))));
@@ -75,7 +75,7 @@ public abstract class MekanismUtilsMixin {
 
     @Inject(method = "getGasPerTickMeanMultiplier", at = @At("HEAD"), cancellable = true)
     private static void modifyGasPerTick(IUpgradeTile tile, CallbackInfoReturnable<Double> cir) {
-        if (tile.supportsUpgrades()) {
+        if (MTEUtils.supportsEnhancement(tile)) {
             if (tile.supportsUpgrade(Upgrade.GAS)) {
                 cir.setReturnValue(Math.pow(MekanismConfig.general.maxUpgradeMultiplier.get(),
                         2 * (fractionUpgrades(tile, Upgrade.SPEED) + MTEUtils.fractionEnhancement(tile, Enhancement.SPEED))
@@ -91,7 +91,7 @@ public abstract class MekanismUtilsMixin {
 
     @Inject(method = "getMaxEnergy(Lmekanism/common/tile/interfaces/IUpgradeTile;Lmekanism/api/math/FloatingLong;)Lmekanism/api/math/FloatingLong;", at = @At("HEAD"), cancellable = true)
     private static void modifyMaxEnergy(IUpgradeTile tile, FloatingLong def, CallbackInfoReturnable<FloatingLong> cir) {
-        if (tile.supportsUpgrades()) {
+        if (MTEUtils.supportsEnhancement(tile)) {
             cir.setReturnValue(def.multiply(Math.pow(MekanismConfig.general.maxUpgradeMultiplier.get(),
                     fractionUpgrades(tile, Upgrade.ENERGY) + MTEUtils.fractionEnhancement(tile, Enhancement.ENERGY))));
             return;

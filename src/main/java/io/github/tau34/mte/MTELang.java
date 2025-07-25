@@ -7,7 +7,10 @@ public enum MTELang implements ILangEntry {
     MTE("constants", "mod_name"),
     ENHANCEMENTS("gui", "enhancements"),
     UPGRADE_PROCESSING("upgrade", "processing"),
-    UPGRADE_PROCESSING_DESCRIPTION("upgrade", "processing.description");
+    UPGRADE_PROCESSING_DESCRIPTION("upgrade", "processing.description"),
+    FACTORY_PAGE_PREVIOUS("gui", "factory.page.previous"),
+    FACTORY_PAGE_NEXT("gui", "factory.page.next"),
+    FACTORY_PAGE("gui", "factory.page");
 
     private final String key;
 

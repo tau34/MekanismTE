@@ -3,11 +3,14 @@ package io.github.tau34.mte.mixin.tile;
 import io.github.tau34.mte.common.holder.IProcessingEnhanceable;
 import io.github.tau34.mte.common.holder.ITileEntityMekanismHolder;
 import io.github.tau34.mte.common.tile.component.TileComponentEnhancement;
+import io.github.tau34.mte.common.util.MTEUtils;
 import io.github.tau34.mte.mixin.data.CapabilityTileEntityMixin;
+import mekanism.api.Upgrade;
 import mekanism.api.providers.IBlockProvider;
 import mekanism.common.tile.base.TileEntityMekanism;
 import mekanism.common.tile.component.ITileComponent;
 import mekanism.common.tile.interfaces.IRedstoneControl;
+import mekanism.common.tile.interfaces.IUpgradeTile;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.NotNull;
@@ -29,7 +32,7 @@ public abstract class TileEntityMekanismMixin extends CapabilityTileEntityMixin 
 
     @Unique private boolean isLoadedClient = false;
 
-    @Shadow public abstract boolean supportsUpgrades();
+    @Unique protected void recalculateAdditional(Upgrade upgrade) {}
 
     @Shadow @Final private List<ITileComponent> components;
 
@@ -41,7 +44,7 @@ public abstract class TileEntityMekanismMixin extends CapabilityTileEntityMixin 
 
     @Inject(method = "<init>", at = @At("RETURN"))
     private void addEnhancements(IBlockProvider blockProvider, BlockPos pos, BlockState state, CallbackInfo ci) {
-        if (supportsUpgrades()) {
+        if (MTEUtils.supportsEnhancement((IUpgradeTile) this)) {
             components.add(enhancementComponent = new TileComponentEnhancement((TileEntityMekanism) (Object) this));
         }
     }
@@ -65,6 +68,11 @@ public abstract class TileEntityMekanismMixin extends CapabilityTileEntityMixin 
             holder.getEnhancementComponent().replaceBlock();
             isLoadedClient = true;
         }
+    }
+
+    @Inject(method = "recalculateUpgrades", at = @At("TAIL"))
+    private void recalculate(Upgrade upgrade, CallbackInfo ci) {
+        recalculateAdditional(upgrade);
     }
 
     @Override

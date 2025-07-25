@@ -1,3 +1,6 @@
 {
-  "gui.mte.enhancements": "Enhancements"
+  "gui.mte.enhancements": "Enhancements",
+  "gui.mte.factory.page.previous": "<",
+  "gui.mte.factory.page.next": ">",
+  "gui.mte.factory.page": "Page %1$s / %2$s"
 }

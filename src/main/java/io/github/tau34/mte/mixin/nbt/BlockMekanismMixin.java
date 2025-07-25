@@ -1,6 +1,7 @@
 package io.github.tau34.mte.mixin.nbt;
 
 import io.github.tau34.mte.common.holder.ITileEntityMekanismHolder;
+import io.github.tau34.mte.common.util.MTEUtils;
 import mekanism.common.block.BlockMekanism;
 import mekanism.common.tile.base.TileEntityMekanism;
 import mekanism.common.util.ItemDataUtils;
@@ -21,7 +22,7 @@ public class BlockMekanismMixin {
     @Inject(method = "setPlacedBy", at = @At(value = "TAIL"))
     private void modifyRead(Level world, BlockPos pos, BlockState state, LivingEntity placer, ItemStack stack, CallbackInfo ci) {
         TileEntityMekanism tile = WorldUtils.getTileEntity(TileEntityMekanism.class, world, pos);
-        if (tile != null && tile.supportsUpgrades() && tile instanceof ITileEntityMekanismHolder holder) {
+        if (tile != null && MTEUtils.supportsEnhancement(tile) && tile instanceof ITileEntityMekanismHolder holder) {
             CompoundTag dataMap = ItemDataUtils.getDataMapIfPresent(stack);
             if (dataMap == null) {
                 dataMap = new CompoundTag();

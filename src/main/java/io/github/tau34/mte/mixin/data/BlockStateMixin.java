@@ -1,6 +1,7 @@
 package io.github.tau34.mte.mixin.data;
 
 import io.github.tau34.mte.common.holder.IBlockStateHolder;
+import mekanism.common.inventory.slot.OutputInventorySlot;
 import net.minecraft.world.level.block.state.BlockState;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
